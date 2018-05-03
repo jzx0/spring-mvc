@@ -3,11 +3,9 @@
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>Insert title here</title>
+        <title>@ControllerAdvice Demo</title>
     </head>
     <body>
-        <pre>
-        Welcome to Spring MVC world！
-        </pre>
+        ${errorMessage}
     </body>
 </html>
