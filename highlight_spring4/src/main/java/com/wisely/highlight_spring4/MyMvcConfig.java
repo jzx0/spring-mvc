@@ -2,14 +2,18 @@ package com.wisely.highlight_spring4;
 
 import com.wisely.highlight_spring4.interceptor.DemoInterceptor;
 import com.wisely.highlight_spring4.interceptor.DemoInterceptor2;
+import com.wisely.highlight_spring4.messageconverter.MyMessageConverter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.web.multipart.MultipartResolver;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 import org.springframework.web.servlet.config.annotation.*;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
 import org.springframework.web.servlet.view.JstlView;
+
+import java.util.List;
 
 /**
  * Spring MVC配置
@@ -49,6 +53,11 @@ public class MyMvcConfig extends WebMvcConfigurerAdapter {
         return multipartResolver;
     }
 
+    @Bean
+    public MyMessageConverter myMessageConverter() {
+        return new MyMessageConverter();
+    }
+
     /**
      * 添加静态资源路径
      * addResourceHandler，对外暴漏的访问路径
@@ -70,17 +79,34 @@ public class MyMvcConfig extends WebMvcConfigurerAdapter {
         registry.addInterceptor(demoInterceptor2());
     }
 
+    /**
+     * 添加控制器与页面的映射
+     * @param registry
+     */
     @Override
     public void addViewControllers(ViewControllerRegistry registry) {
-        //添加控制器与页面的映射
         registry.addViewController("/index").setViewName("/index");
         registry.addViewController("/toUpload").setViewName("/upload");
+        registry.addViewController("/converter").setViewName("/converter");
     }
 
+    /**
+     * 配置路径匹配规则
+     * @param configurer
+     */
     @Override
     public void configurePathMatch(PathMatchConfigurer configurer) {
         //不忽略“.”后面的参数
         configurer.setUseSuffixPatternMatch(false);
+    }
+
+    /**
+     * 注册（扩展）HttpMessageConverter
+     * @param converters
+     */
+    @Override
+    public void extendMessageConverters(List<HttpMessageConverter<?>> converters) {
+        converters.add(myMessageConverter());
     }
 
 }
